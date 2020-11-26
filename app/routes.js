@@ -1,9 +1,9 @@
 module.exports = function(app, streams) {
 
-  // GET home 
+  // GET home
   var index = function(req, res) {
-    res.render('index', { 
-                          title: 'Project RTC', 
+    res.render('index', {
+                          title: 'Project RTC',
                           header: 'WebRTC live streaming',
                           username: 'Username',
                           share: 'Share this link',
@@ -16,7 +16,8 @@ module.exports = function(app, streams) {
   var displayStreams = function(req, res) {
     var streamList = streams.getStreams();
     // JSON exploit to clone streamList.public
-    var data = (JSON.parse(JSON.stringify(streamList))); 
+    var data = (JSON.parse(JSON.stringify(streamList)));
+    console.log('data ===>',data,req.headers.host);
 
     res.status(200).json(data);
   };

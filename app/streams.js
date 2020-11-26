@@ -1,6 +1,6 @@
 module.exports = function() {
   /**
-   * available streams 
+   * available streams
    * the id value is considered unique (provided by socket.io)
    */
   var streamList = [];
@@ -11,7 +11,7 @@ module.exports = function() {
   var Stream = function(id, name) {
     this.name = name;
     this.id = id;
-  }
+  };
 
   return {
     addStream : function(id, name) {

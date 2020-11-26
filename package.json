@@ -1,5 +1,5 @@
 {
-  "name": "ProjectRTC",
+  "name": "trackflowScreenShareServer",
   "version": "0.4.0",
   "author": "Pierre Chabardes <pierre@chabardes.net>",
   "description": "a webRTC live streaming server",
@@ -22,6 +22,7 @@
     "method-override": "^2.3.2",
     "morgan": "^1.5.2",
     "multer": "^0.1.8",
+    "nodemon": "^2.0.6",
     "serve-favicon": "^2.2.0",
     "socket.io": "1.0"
   }

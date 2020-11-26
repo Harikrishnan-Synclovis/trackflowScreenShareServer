@@ -1,6 +1,6 @@
 module.exports = function(io, streams) {
 
-  io.on('connection', function(client) {
+  io.on('connection', function(client){
     console.log('-- ' + client.id + ' joined --');
     client.emit('id', client.id);
 
@@ -14,13 +14,13 @@ module.exports = function(io, streams) {
         details.from = client.id;
         otherClient.emit('message', details);
     });
-      
+
     client.on('readyToStream', function(options) {
       console.log('-- ' + client.id + ' is ready to stream --');
-      
-      streams.addStream(client.id, options.name); 
+
+      streams.addStream(client.id, options.name);
     });
-    
+
     client.on('update', function(options) {
       streams.update(client.id, options.name);
     });
