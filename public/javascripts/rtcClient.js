@@ -17,12 +17,30 @@ var PeerManager = (function () {
       peerDatabase = {},
       localStream,
       remoteVideoContainer = document.getElementById('remoteVideosContainer'),
-      socket = io();
+      socket = io(),
+      // socket = io('http://localhost:7003/socket.io?apiKey='+encodeURIComponent('U2FsdGVkX1+xygYrkrfI9u+agZ4XNPgHbdFj4RyZRSlBdVFSXXEQ53ul4ZHDv1KFUNEGj5kfdumMR3vkb4bj7xZweR9bXoGORNArSh7ntHs=')+'&pName='+encodeURIComponent('com.synclovis.testnativetrackflowmodule')+'&dId='+encodeURIComponent('Q29vbHBhZCAzNjAwSTU0OkRDOjFEOjgyOkFCOjg0MzYxMw==')+'&platform=ANDROID&type=MOBILE');
 
-  socket.on('message', handleMessage);
-  socket.on('id', function(id) {
-    localId = id;
-  });
+      // socket = io('http://localhost:7003/socket.io/web_session?type=WEB_TESTER&deviceType=DESKTOP&osName=WINDOWS&osVersion=10&browserName=CHROME&browserVersion=59.6.0&buildVersion=2.5&apiKey='+ encodeURIComponent('U2FsdGVkX1+xygYrkrfI9u+agZ4XNPgHbdFj4RyZRSlBdVFSXXEQ53ul4ZHDv1KFUNEGj5kfdumMR3vkb4bj7xZweR9bXoGORNArSh7ntHs=')+"&fingerPrint=teyweybuyuyubyugghjjh7484y87yu");
+
+       websocket = io('http://localhost:7003/socket.io?token=$2b$13$h99bq9xWgjKeiz8SsSNoXe2PCMS41jhYxUR8Uq04g3dypu25cINHa&tId=105&type=WEB');
+
+  let testSessionPayload = null;
+  websocket.on('connection',(connectionInfo )=>{
+    console.log('checking here',connectionInfo);
+    if(connectionInfo.data.testSessionStatus == 'RUNNING'){
+      testSessionPayload = {
+        logTrackId:connectionInfo.data._id,
+        testerName:connectionInfo.data.testerName,
+      };
+      websocket.emit("notifyStreaminIsReady",{logTrackId:connectionInfo.data._id,testSessionStatus:connectionInfo.data.testSessionStatus,testerName:connectionInfo.data.testerName.trim()});
+
+    }
+    });
+  socket.on('streamlink',shareStreamlink=>{
+    console.log('streamlink for trackflow ====>',shareStreamlink.stream);
+    websocket.emit('remoteStreamingTestSession',{url:"http://localhost:3000/"+shareStreamlink.stream});
+  })
+
 
   function addPeer(remoteId) {
     var peer = new Peer(config.peerConnectionConfig, config.peerConnectionConstraints);
@@ -126,7 +144,14 @@ var PeerManager = (function () {
   }
 
   return {
-    getId: function() {
+    getId:  function() {
+      // return localId;
+      let localId = null
+       socket.on('streamlink',(data)=>{
+        console.log('streamlink ====>',data);
+        localId = data.stream;
+      });
+      console.log('localId',localId)
       return localId;
     },
 
@@ -161,7 +186,8 @@ var PeerManager = (function () {
     },
 
     send: function(type, payload) {
-      socket.emit(type, payload);
+      console.log("payload",testSessionPayload);
+      socket.emit(type, testSessionPayload);
     }
   };
 

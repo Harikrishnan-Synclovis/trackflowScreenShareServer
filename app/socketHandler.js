@@ -1,5 +1,5 @@
 module.exports = function(io, streams) {
-
+  let socketLogTrackId = null;
   io.on('connection', function(client){
     console.log('-- ' + client.id + ' joined --');
     client.emit('id', client.id);
@@ -18,7 +18,11 @@ module.exports = function(io, streams) {
     client.on('readyToStream', function(options) {
       console.log('-- ' + client.id + ' is ready to stream --');
 
-      streams.addStream(client.id, options.name);
+      console.log("--- options details ----",options);
+      client.emit("streamlink",{stream:client.id+options.logTrackId});
+      socketLogTrackId = options.logTrackId
+      streams.addStream(client.id+options.logTrackId, options.testerName);
+      console.log('number of streams =====>',streams.getStreams())
     });
 
     client.on('update', function(options) {
@@ -27,7 +31,10 @@ module.exports = function(io, streams) {
 
     function leave() {
       console.log('-- ' + client.id + ' left --');
-      streams.removeStream(client.id);
+       streams.removeStream('ETiuIAwPnN5uIFbsAAAA105_208_89_73')
+      streams.removeStream('0yOIxODWlgnbNy9nAAAA105_208_89_73')
+
+      streams.removeStream(client.id+socketLogTrackId);
     }
 
     client.on('disconnect', leave);
