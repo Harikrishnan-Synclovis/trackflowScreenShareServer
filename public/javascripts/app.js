@@ -60,6 +60,7 @@
 				var streams = data.filter(function(stream) {
 			      	return stream.id != client.getId();
 			    });
+				console.log('in app.js loadData ==== streams',streams);
 			    // get former state
 			    // for(var i=0; i<streams.length;i++) {
 			    // 	var stream = getStreamById(streams[i].id);
@@ -69,7 +70,7 @@
 			    // }
 			    // save new streams
 				console.log('outside loop ===>',streams);
-			    rtc.remoteStreams = stream;
+			    rtc.remoteStreams = streams;
 			});
 		};
 

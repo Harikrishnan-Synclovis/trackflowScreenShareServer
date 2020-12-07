@@ -23,6 +23,11 @@ var PeerManager = (function () {
       // socket = io('http://localhost:7003/socket.io/web_session?type=WEB_TESTER&deviceType=DESKTOP&osName=WINDOWS&osVersion=10&browserName=CHROME&browserVersion=59.6.0&buildVersion=2.5&apiKey='+ encodeURIComponent('U2FsdGVkX1+xygYrkrfI9u+agZ4XNPgHbdFj4RyZRSlBdVFSXXEQ53ul4ZHDv1KFUNEGj5kfdumMR3vkb4bj7xZweR9bXoGORNArSh7ntHs=')+"&fingerPrint=teyweybuyuyubyugghjjh7484y87yu");
 
        websocket = io('http://localhost:7003/socket.io?token=$2b$13$h99bq9xWgjKeiz8SsSNoXe2PCMS41jhYxUR8Uq04g3dypu25cINHa&tId=105&type=WEB');
+  socket.on('message', handleMessage);
+  // socket.on('id', function(id) {
+  //   console.log("test 6 rtcclient socket id ",id,localStream);
+  //   localId = id;
+  // });
 
   let testSessionPayload = null;
   websocket.on('connection',(connectionInfo )=>{
@@ -37,10 +42,18 @@ var PeerManager = (function () {
     }
     });
   socket.on('streamlink',shareStreamlink=>{
+    // localId = shareStreamlink.stream;
     console.log('streamlink for trackflow ====>',shareStreamlink.stream);
     websocket.emit('remoteStreamingTestSession',{url:"http://localhost:3000/"+shareStreamlink.stream});
-  })
+  });
 
+  socket.on('message', handleMessage=>{
+    console.log('handlermessages',handleMessage);
+  });
+  socket.on('id', function(id) {
+    console.log("test 6 rtcclient socket id ",id,localStream);
+    localId = id
+  });
 
   function addPeer(remoteId) {
     var peer = new Peer(config.peerConnectionConfig, config.peerConnectionConstraints);
@@ -146,13 +159,13 @@ var PeerManager = (function () {
   return {
     getId:  function() {
       // return localId;
-      let localId = null
-       socket.on('streamlink',(data)=>{
-        console.log('streamlink ====>',data);
-        localId = data.stream;
-      });
-      console.log('localId',localId)
-      return localId;
+      // let localId = null
+      //  socket.on('streamlink',(data)=>{
+      //   console.log('streamlink ====>',data);
+      //   localId = data.stream;
+      // });
+       console.log('localId',localId+testSessionPayload.logTrackId)
+      return localId+testSessionPayload.logTrackId;
     },
 
     setLocalStream: function(stream) {
@@ -172,20 +185,24 @@ var PeerManager = (function () {
     },
 
     toggleLocalStream: function(remoteId) {
+      console.log('toggle Local Stream =====>',remoteId);
       peer = peerDatabase[remoteId] || addPeer(remoteId);
       toggleLocalStream(peer.pc);
     },
 
     peerInit: function(remoteId) {
+      console.log('peer init =====>',remoteId);
       peer = peerDatabase[remoteId] || addPeer(remoteId);
       send('init', remoteId, null);
     },
 
     peerRenegociate: function(remoteId) {
+      console.log('peer Renegociate ====>',remoteId);
       offer(remoteId);
     },
 
     send: function(type, payload) {
+      console.log('send =======>',type,payload);
       console.log("payload",testSessionPayload);
       socket.emit(type, testSessionPayload);
     }

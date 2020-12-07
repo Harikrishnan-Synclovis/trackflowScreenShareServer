@@ -6,12 +6,15 @@ module.exports = function(io, streams) {
 
     client.on('message', function (details) {
       var otherClient = io.sockets.connected[details.to];
+      console.log("otheClient from ",otherClient,details)
 
       if (!otherClient) {
+        console.log('here not equal to')
         return;
       }
         delete details.to;
         details.from = client.id;
+        console.log('other not equal to')
         otherClient.emit('message', details);
     });
 
