@@ -15,6 +15,7 @@ module.exports = function(app, streams) {
   // GET streams as JSON
   var displayStreams = function(req, res) {
     var streamList = streams.getStreams();
+    console.log("test 2 display streams routes ");
     // JSON exploit to clone streamList.public
     var data = (JSON.parse(JSON.stringify(streamList)));
     console.log('data ===>',data,req.headers.host);
@@ -25,4 +26,4 @@ module.exports = function(app, streams) {
   app.get('/streams.json', displayStreams);
   app.get('/', index);
   app.get('/:id', index);
-}
+};

@@ -2,6 +2,7 @@ module.exports = function(io, streams) {
 
   io.on('connection', function(client){
     console.log('-- ' + client.id + ' joined --');
+    console.log(" test 1 connection from socket");
     client.emit('id', client.id);
 
     client.on('message', function (details) {
@@ -16,9 +17,11 @@ module.exports = function(io, streams) {
     });
 
     client.on('readyToStream', function(options) {
+      console.log('test 4 readytostream socket');
       console.log('-- ' + client.id + ' is ready to stream --');
 
       streams.addStream(client.id, options.name);
+      console.log('test 5 addStream socket',streams.getStreams());
     });
 
     client.on('update', function(options) {

@@ -21,6 +21,7 @@ var PeerManager = (function () {
 
   socket.on('message', handleMessage);
   socket.on('id', function(id) {
+    console.log("test 6 rtcclient socket id ",id,localStream);
     localId = id;
   });
 
@@ -78,6 +79,7 @@ var PeerManager = (function () {
     );
   }
   function handleMessage(message) {
+    console.log("message test ======>",message)
     var type = message.type,
         from = message.from,
         pc = (peerDatabase[from] || addPeer(from)).pc;
@@ -117,6 +119,7 @@ var PeerManager = (function () {
     });
   }
   function toggleLocalStream(pc) {
+    console.log('test 8 toggleLocalStream =======>',localStream);
     if(localStream) {
       (!!pc.getLocalStreams().length) ? pc.removeStream(localStream) : pc.addStream(localStream);
     }
@@ -147,11 +150,13 @@ var PeerManager = (function () {
     },
 
     toggleLocalStream: function(remoteId) {
+      console.log('toggleLocalStream',remoteId);
       peer = peerDatabase[remoteId] || addPeer(remoteId);
       toggleLocalStream(peer.pc);
     },
 
     peerInit: function(remoteId) {
+      console.log('peer init -====',remoteId);
       peer = peerDatabase[remoteId] || addPeer(remoteId);
       send('init', remoteId, null);
     },
