@@ -17,10 +17,15 @@ module.exports = function(io, streams) {
     });
 
     client.on('readyToStream', function(options) {
-      console.log('test 4 readytostream socket');
+      console.log('test 4 readytostream socket',options);
       console.log('-- ' + client.id + ' is ready to stream --');
+      let testerName = null
+      client.on('testDetails',details=>{
+        console.log('details= =======>',details);
+      })
 
       streams.addStream(client.id, options.name);
+      client.emit("streamlink",{stream:client.id});
       console.log('test 5 addStream socket',streams.getStreams());
     });
 

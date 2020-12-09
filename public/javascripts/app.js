@@ -143,10 +143,10 @@
 			} else {
 				camera.start()
 				.then(function(result) {
-					console.log('task 3',result,client.getId());
+					console.log('task 3',result,client.getId().localId);
 
-					localStream.link = $window.location.host + '/' + client.getId();
-					console.log("test 3.1",localStream.link)
+					localStream.link = $window.location.host + '/' + client.getId().localId;
+					console.log("test 3.1",localStream )
 
 					client.send('readyToStream', { name: localStream.name });
 				})

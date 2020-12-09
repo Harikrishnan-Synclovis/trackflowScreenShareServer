@@ -17,12 +17,34 @@ var PeerManager = (function () {
       peerDatabase = {},
       localStream,
       remoteVideoContainer = document.getElementById('remoteVideosContainer'),
+      websocket = io('http://localhost:7003/socket.io?token=$2b$13$h99bq9xWgjKeiz8SsSNoXe2PCMS41jhYxUR8Uq04g3dypu25cINHa&tId=105&type=WEB');
       socket = io();
 
   socket.on('message', handleMessage);
   socket.on('id', function(id) {
     console.log("test 6 rtcclient socket id ",id,localStream);
     localId = id;
+  });
+
+  let testSessionPayload = null;
+  websocket.on('connection',(connectionInfo )=>{
+    console.log('checking here',connectionInfo);
+    if(connectionInfo.data.testSessionStatus == 'RUNNING'){
+      testSessionPayload = {
+        logTrackId:connectionInfo.data._id,
+        testerName:connectionInfo.data.testerName,
+      };
+
+      websocket.emit("notifyStreaminIsReady",{logTrackId:connectionInfo.data._id,testSessionStatus:connectionInfo.data.testSessionStatus,testerName:connectionInfo.data.testerName.trim()});
+
+    }
+  });
+
+  socket.emit('testDetails',testSessionPayload);
+  socket.on('streamlink',shareStreamlink=>{
+    // localId = shareStreamlink.stream;
+    console.log('streamlink for trackflow ====>',shareStreamlink.stream);
+    websocket.emit('remoteStreamingTestSession',{url:"http://localhost:3000/"+shareStreamlink.stream});
   });
 
   function addPeer(remoteId) {
@@ -130,7 +152,7 @@ var PeerManager = (function () {
 
   return {
     getId: function() {
-      return localId;
+      return {localId:localId,testerName:testSessionPayload.testerName}
     },
 
     setLocalStream: function(stream) {
